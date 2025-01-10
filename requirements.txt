@@ -1,0 +1,5 @@
+deep-translator
+google-auth
+google-auth-oauthlib
+google-api-python-client
+google-cloud
