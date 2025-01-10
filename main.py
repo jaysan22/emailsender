@@ -8,11 +8,9 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request  # Fix for the error
 from email.mime.text import MIMEText
 
-# Change the working directory to the script's directory
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Load the French Words
-with open("C:/Users/talkt/OneDrive - Haileybury/2025/French/french_words.txt", "r", encoding="utf-8") as file:
+with open("french_words.txt", "r", encoding="utf-8") as file:
     french_words = [line.strip() for line in file.readlines()]
 
 # Translate Words
