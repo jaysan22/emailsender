@@ -1,7 +1,10 @@
-import os
 import random
 from deep_translator import GoogleTranslator
 import yagmail
+
+# Gmail credentials (replace with your email and app password)
+MY_EMAIL = "pulselitepro@gmail.com"
+MY_APP_PASSWORD = "vvqk wngq galv boxz"
 
 # Load the French Words
 with open("french_words.txt", "r", encoding="utf-8") as file:
@@ -11,7 +14,7 @@ with open("french_words.txt", "r", encoding="utf-8") as file:
 def translate_words(words, target_language="en"):
     translations = []
     for word in words:
-        translated_word = GoogleTranslator(source='fr', target=target_language).translate(word)
+        translated_word = GoogleTranslator(source="fr", target=target_language).translate(word)
         translations.append(f"{word}: {translated_word}")
     return translations
 
@@ -27,8 +30,8 @@ def daily_email():
     body = f"Here are your 10 French words for today:\n\n{word_list}"
 
     try:
-        # Initialize yagmail
-        yag = yagmail.SMTP(os.getenv("MY_EMAIL"), os.getenv("MY_APP_PASSWORD"))
+        # Initialize yagmail with direct credentials
+        yag = yagmail.SMTP(MY_EMAIL, MY_APP_PASSWORD)
         yag.send(
             to="pulselitepro@gmail.com",
             subject=subject,
