@@ -1,13 +1,7 @@
 import os
 import random
-import base64
 from deep_translator import GoogleTranslator
-from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request  # Fix for the error
-from email.mime.text import MIMEText
-
+import yagmail
 
 # Load the French Words
 with open("french_words.txt", "r", encoding="utf-8") as file:
@@ -21,51 +15,25 @@ def translate_words(words, target_language="en"):
         translations.append(f"{word}: {translated_word}")
     return translations
 
-# Gmail API Authentication Setup
-def authenticate_gmail():
-    SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
-    creds = None
-    # Check if token.json exists and load credentials
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If no credentials or invalid credentials, authenticate user
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                os.path.join(os.getcwd(), 'credentials.json'), SCOPES)  # Ensure correct path to credentials.json
-            # Use a fixed port for the local server
-            creds = flow.run_local_server(port=8080)
-        # Save credentials for future use
-        with open('token.json', 'w') as token_file:
-            token_file.write(creds.to_json())
-    # Return Gmail API service
-    service = build("gmail", "v1", credentials=creds)
-    return service
-
-# Create and Send Email
-def send_email(service, recipient, subject, body):
-    message = MIMEText(body)
-    message["to"] = recipient
-    message["subject"] = subject
-    raw = base64.urlsafe_b64encode(message.as_bytes()).decode("utf-8")
-    message = {"raw": raw}
-
-    service.users().messages().send(userId="me", body=message).execute()
-
 # Main Function to Generate and Send Email
 def daily_email():
+    # Select 10 random words and translate them
     random_words = random.sample(french_words, 10)
     translated_words = translate_words(random_words)
     word_list = "\n".join(translated_words)
 
+    # Email subject and body
     subject = "Your Daily French Words"
     body = f"Here are your 10 French words for today:\n\n{word_list}"
 
     try:
-        service = authenticate_gmail()
-        send_email(service, "pulselitepro@gmail.com", subject, body)
+        # Initialize yagmail
+        yag = yagmail.SMTP(os.getenv("MY_EMAIL"), os.getenv("MY_APP_PASSWORD"))
+        yag.send(
+            to="pulselitepro@gmail.com",
+            subject=subject,
+            contents=body,
+        )
         print("Email sent successfully!")
     except Exception as e:
         print(f"Failed to send email: {e}")
