@@ -3,8 +3,8 @@ from deep_translator import GoogleTranslator
 import yagmail
 
 # Gmail credentials (replace with your email and app password)
-MY_EMAIL = "pulselitepro@gmail.com"
-MY_APP_PASSWORD = "vvqk wngq galv boxz"
+MY_EMAIL = "example@email.com"
+MY_APP_PASSWORD = "aaaa bbbb cccc dddd"
 
 # Load the French Words
 with open("french_words.txt", "r", encoding="utf-8") as file:
@@ -33,7 +33,7 @@ def daily_email():
         # Initialize yagmail with direct credentials
         yag = yagmail.SMTP(MY_EMAIL, MY_APP_PASSWORD)
         yag.send(
-            to="pulselitepro@gmail.com",
+            to="example@email.com",
             subject=subject,
             contents=body,
         )
@@ -44,3 +44,4 @@ def daily_email():
 # Run the Script
 if __name__ == "__main__":
     daily_email()
+
